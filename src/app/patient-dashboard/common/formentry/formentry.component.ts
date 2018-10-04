@@ -56,17 +56,18 @@ export class FormentryComponent implements OnInit, OnDestroy {
     busy: true,
     message: 'Please wait...' // default message
   };
-  public formName: string = '';
-  public preserveFormAsDraft: boolean = true;
+  public formName = '';
+  public preserveFormAsDraft = true;
   public form: Form;
   public formSubmissionErrors: Array<any> = null;
   public formRenderingErrors: Array<any> = [];
   public referralPrograms: string[] = [];
-  public showSuccessDialog: boolean = false;
-  public showReferralDialog: boolean = false;
+  public showSuccessDialog = false;
+  public showReferralDialog = false;
+  public showProcessReferralsDialog = false;
   public referralCompleteStatus: BehaviorSubject<boolean> = new BehaviorSubject(null);
   public patient: Patient = null;
-  public submitClicked: boolean = false;
+  public submitClicked = false;
   public submittedOrders: any = {
     encounterUuid: null,
     orders: []
@@ -119,6 +120,7 @@ export class FormentryComponent implements OnInit, OnDestroy {
       .trackEvent('Patient Dashboard', 'Formentry Component Loaded', 'ngOnInit');
     this.wireDataSources();
     const componentRef = this;
+    this.showProcessReferralsDialog = true;
 
     // get visitUuid & encounterUuid then load form
     this.route.queryParams.subscribe((params) => {

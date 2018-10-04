@@ -55,12 +55,12 @@ export class ProviderResourceService {
       return response.json();
     }));
   }
-  public getProviderByPersonUuid(uuid) {
+  public getProviderByPersonUuid(uuid, v?) {
     let providerResults = new ReplaySubject(1);
     this.personService.getPersonByUuid(uuid, false).take(1).subscribe(
       (result) => {
         if (result) {
-          let response = this.searchProvider(result.display);
+          let response = this.searchProvider(result.display, false, v);
 
           response.take(1).subscribe(
             (providers) => {
