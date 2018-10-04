@@ -167,7 +167,7 @@ export class CommunityGroupService {
   }
 
   public startIndividualVisit(payload): any {
-    const url =  this.getOpenMrsBaseUrl() + `/cohortmembervisit`
+    const url =  this.getOpenMrsBaseUrl() + `/cohortmembervisit`;
     return this.http.post(url, payload).pipe(
       map((response) => response.json())
     );

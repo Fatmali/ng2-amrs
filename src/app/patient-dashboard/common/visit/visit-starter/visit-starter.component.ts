@@ -26,16 +26,16 @@ import { Subscription } from 'rxjs';
 })
 export class VisitStarterComponent implements OnInit, OnDestroy {
 
-  @ViewChild('startGroupVisitModal') public modalRef: BsModalRef;
+  @ViewChild('startGroupVisitModal') public startGroupVisitModal;
 
   public programVisitsConfig: any = {};
-
+  public modalRef: BsModalRef;
   @Output()
   public visitStarted = new EventEmitter<any>();
 
-  public isBusy: boolean = false;
-  public startedVisit: boolean = false;
-  public error: string = '';
+  public isBusy = false;
+  public startedVisit = false;
+  public error = '';
   public infoMessage: any = [];
   public patientCohort: any = [];
   public cohostVisitsDropdownOptions: any[];
@@ -121,7 +121,7 @@ export class VisitStarterComponent implements OnInit, OnDestroy {
     this._subscription.unsubscribe();
   }
   public setUserDefaultLocation() {
-    let location: any = this.userDefaultPropertiesService.getCurrentUserDefaultLocationObject();
+    const location: any = this.userDefaultPropertiesService.getCurrentUserDefaultLocationObject();
     this.retrospectiveDataEntryService.retroSettings.subscribe((retroSettings) => {
       if (location && location.uuid) {
         if (retroSettings && retroSettings.enabled) {
@@ -165,11 +165,11 @@ export class VisitStarterComponent implements OnInit, OnDestroy {
       this._subscription.add(this.communityGroupMemberService
         .getMemberCohortsByPatientUuid(this.patientUuid).subscribe((patientCohorts) => {
         this.patientCohort = patientCohorts.find((c) => {
-          let attribute = c.cohort.attributes.find((a) => {
-            return a.value === '334c9e98-173f-4454-a8ce-f80b20b7fdf0';
+          const attribute = c.cohort.attributes.find((a) => {
+            return a.value === '334c9e98-173f-4454-a8ce-f80b20b7fdf0' && c.voided === false;
           });
           return attribute !== undefined;
-        })
+        });
 
         console.log('Patient Cohort', this.patientCohort);
         if (this.patientCohort) {
@@ -184,7 +184,7 @@ export class VisitStarterComponent implements OnInit, OnDestroy {
       }, (error) => {
         console.log('Error', error);
       }));
-      this.modalRef = this.modalService.show(this.modalRef);
+      this.modalRef = this.modalService.show(this.startGroupVisitModal);
     } else {
       this.saveVisit(this.selectedVisitType);
     }
@@ -192,12 +192,12 @@ export class VisitStarterComponent implements OnInit, OnDestroy {
   }
 
   public saveVisit(visitType) {
-    let visitTypeUuid = visitType.uuid;
-    let retroSettings = this.retrospectiveDataEntryService.retroSettings.value;
+    const visitTypeUuid = visitType.uuid;
+    const retroSettings = this.retrospectiveDataEntryService.retroSettings.value;
     this.startedVisit = true;
     this.isBusy = true;
     this.error = '';
-    let payload = {
+    const payload = {
       patient: this.patientUuid,
       location: this.selectedLocation.value,
       startDatetime: new Date(),
@@ -217,7 +217,7 @@ export class VisitStarterComponent implements OnInit, OnDestroy {
     if (visitType.groupVisit) {
       this.saveGroupVisit();
     } else {
-      this.saveIndividualVisit(payload)
+      this.saveIndividualVisit(payload);
     }
   }
 
@@ -227,9 +227,9 @@ export class VisitStarterComponent implements OnInit, OnDestroy {
     });
   }
   public saveGroupVisit() {
-    let cohortVisit = this.getCohort();
+    const cohortVisit = this.getCohort();
     if (cohortVisit) {
-      let groupPayload = {
+      const groupPayload = {
         visit: {
           patient: this.patientUuid,
           location: cohortVisit.location.uuid,
@@ -238,7 +238,6 @@ export class VisitStarterComponent implements OnInit, OnDestroy {
         },
         cohortVisit: cohortVisit.uuid
       };
-      console.log('Payload', groupPayload);
       this._subscription.add(this.communityGroupService.startIndividualVisit(groupPayload).subscribe((v) => {
         this.isBusy = false;
         this.visitStarted.emit(v.visit);
@@ -276,15 +275,18 @@ export class VisitStarterComponent implements OnInit, OnDestroy {
   }
 
   public onCohortChange($event) {
-    let cohortVisit = this.getCohort();
-    let selectedDatePast = moment(cohortVisit.startDate).isBefore(moment(), "day");
-    let retroDateEqualToCohortVisitDate = this.retroSettings &&
-      moment(cohortVisit.startDate).isSame(moment(this.retroSettings.visitDate), "day");
+    const cohortVisit = this.getCohort();
+    const selectedDatePast = moment(cohortVisit.startDate).isBefore(moment(), 'day');
+    console.log(selectedDatePast);
+    const retroDateEqualToCohortVisitDate = this.retroSettings &&
+      moment(cohortVisit.startDate).isSame(moment(this.retroSettings.visitDate), 'day');
+    console.log(this.retroSettings, retroDateEqualToCohortVisitDate,
+      moment(cohortVisit.startDate).isSame(moment(this.retroSettings.visitDate)), 'day');
     this.isGroupRetrospective = !(selectedDatePast && retroDateEqualToCohortVisitDate);
   }
 
   public activateRetrospectiveDataEntry(cohortVisit) {
-    let providerAttribute = this.communityGroupService.getGroupAttribute('provider', this.patientCohort.cohort.attributes);
+    const providerAttribute = this.communityGroupService.getGroupAttribute('provider', this.patientCohort.cohort.attributes);
     if (providerAttribute && providerAttribute.value) {
       const v = 'custom:(person:(uuid,display,attributes:(attributeType:(uuid),value,display)),uuid)';
       this.isBusy = true;

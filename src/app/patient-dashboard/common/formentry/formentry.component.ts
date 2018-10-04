@@ -56,18 +56,17 @@ export class FormentryComponent implements OnInit, OnDestroy {
     busy: true,
     message: 'Please wait...' // default message
   };
-  public formName = '';
-  public preserveFormAsDraft = true;
+  public formName: string = '';
+  public preserveFormAsDraft: boolean = true;
   public form: Form;
   public formSubmissionErrors: Array<any> = null;
   public formRenderingErrors: Array<any> = [];
   public referralPrograms: string[] = [];
-  public showSuccessDialog = false;
-  public showReferralDialog = false;
-  public showProcessReferralsDialog = false;
+  public showSuccessDialog: boolean = false;
+  public showReferralDialog: boolean = false;
   public referralCompleteStatus: BehaviorSubject<boolean> = new BehaviorSubject(null);
   public patient: Patient = null;
-  public submitClicked = false;
+  public submitClicked: boolean = false;
   public submittedOrders: any = {
     encounterUuid: null,
     orders: []
@@ -86,6 +85,8 @@ export class FormentryComponent implements OnInit, OnDestroy {
   private compiledSchemaWithEncounter: any = null;
   private submitDuplicate: boolean = false;
   private previousEncounters = [];
+  private groupUuid;
+  public isGroupVisit;
 
   constructor(private appFeatureAnalytics: AppFeatureAnalytics,
               private route: ActivatedRoute,
@@ -120,7 +121,6 @@ export class FormentryComponent implements OnInit, OnDestroy {
       .trackEvent('Patient Dashboard', 'Formentry Component Loaded', 'ngOnInit');
     this.wireDataSources();
     const componentRef = this;
-    this.showProcessReferralsDialog = true;
 
     // get visitUuid & encounterUuid then load form
     this.route.queryParams.subscribe((params) => {
@@ -129,6 +129,7 @@ export class FormentryComponent implements OnInit, OnDestroy {
       componentRef.transferCareForm = params['transferCareEncounter'];
       componentRef.programEncounter = params['programEncounter'];
       componentRef.referralEncounterType = params['referralEncounterType'];
+      componentRef.groupUuid = params['groupUuid'];
       if (componentRef.draftedFormsService.lastDraftedForm !== null &&
         componentRef.draftedFormsService.lastDraftedForm !== undefined &&
         componentRef.draftedFormsService.loadDraftOnNextFormLoad) {
@@ -156,6 +157,9 @@ export class FormentryComponent implements OnInit, OnDestroy {
         }, 1);
 
         return;
+      }
+      if (componentRef.groupUuid) {
+        componentRef.isGroupVisit = true;
       }
       componentRef.loadForm();   // load  form
       this.isBusyIndicator(false);
@@ -283,6 +287,10 @@ export class FormentryComponent implements OnInit, OnDestroy {
           queryParams: { reset: true }
         });
         break;
+      case 'groupManager':
+          this.preserveFormAsDraft = false;
+          this.router.navigate(['/clinic-dashboard/' + this.encounterLocation.value + '/general/group-manager/group/' + this.groupUuid]);
+          break;
       default:
         console.error('unknown path');
     }

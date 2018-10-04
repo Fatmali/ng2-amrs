@@ -43,3 +43,6 @@ form-renderer {
   #formentry-submit-btn {
     margin-right: 10px;
   }
+.list-group-item {
+  border: none;
+}

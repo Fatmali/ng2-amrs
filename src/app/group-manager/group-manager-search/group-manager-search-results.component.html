@@ -11,8 +11,8 @@
           <tr>
             <th>Group Number</th>
             <th>Group Name</th>
-            <th>Landmark</th>
             <th>Facility</th>
+            <th>Landmark</th>
             <th>Status</th>
             <th>Actions</th>
             <th></th>
@@ -23,8 +23,8 @@
             (click)="selectGroup(group.uuid)">
             <td> {{ getAttribute('groupNumber', group.attributes) }} </td>
             <td>{{group.name}}</td>
-            <td>{{ getAttribute('landmark', group.attributes) }}</td>
             <td *ngIf="group.location">{{group.location.display}}</td>
+            <td>{{ getAttribute('landmark', group.attributes) }}</td>
             <td *ngIf="!group.location">-</td>
             <td *ngIf="group.endDate == null">Active</td>
             <td *ngIf="group.endDate != null">Inactive</td>

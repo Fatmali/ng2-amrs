@@ -51,7 +51,15 @@ export class GroupDetailComponent implements OnInit, OnDestroy, AfterViewInit {
   public isFiltered = true;
   public subscriptions = new Subscription();
   public visitType: any = '';
-  public groupVisitDate: any = { jsdate: new Date() };
+  public today = {
+    'year': Moment().year(),
+    'month': Moment().month(),
+    'day': Moment().date()
+}
+  public groupVisitDate: any = {
+    date: this.today,
+    jsdate: new Date()
+};
   public cohortVisits = [];
   public patientVisitPayload: any;
   public visitTypes = [];
@@ -127,11 +135,10 @@ export class GroupDetailComponent implements OnInit, OnDestroy, AfterViewInit {
     if (program) {
       programShortName = program.value;
     }
-    console.log(programUuid, personUuid);
 
     if (programUuid && personUuid) {
       this.router.navigate([`/patient-dashboard/patient/${personUuid}/`,
-        'hiv', programUuid.value, 'visit']);
+        'hiv', programUuid.value, 'visit'], {queryParams: {groupUuid: this.group.uuid}});
 
     }
   }
@@ -223,7 +230,7 @@ export class GroupDetailComponent implements OnInit, OnDestroy, AfterViewInit {
     const groupVisit = {
       visitType: this.visitType,
       location: this.group.location.uuid,
-      startDate: this.groupVisitDate.formatted,
+      startDate: this.groupVisitDate.jsdate,
       cohort: this.group.uuid
     };
     this.communityGroupService.startGroupVisit(groupVisit).subscribe((result) => {
@@ -293,9 +300,9 @@ export class GroupDetailComponent implements OnInit, OnDestroy, AfterViewInit {
         field: `group_visit_${index}`,
         cellRenderer: (column) => {
           if (column.value) {
-            return `<p class=check>&#x2714;</p>`;
+            return `<i class="fa fa-check text-success"></i>`;
           } else {
-            return `<p class=ex>&#215;</p>`;
+            return `<i class="fa fa-times text-danger"></i>`;
           }
         }
 

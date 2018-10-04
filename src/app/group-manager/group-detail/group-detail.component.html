@@ -95,9 +95,10 @@
     </button>
   </div>
   <div class="modal-body">
+    <form #startVisitForm="ngForm">
     <div class="form-group">
       <label>Visit Type</label>
-      <select type="text" class="form-control" name="visitType" [(ngModel)]="visitType">
+      <select type="text" class="form-control" name="visitType" [(ngModel)]="visitType" required>
         <option [value]=""></option>
         <option *ngFor="let item of visitTypes" [value]="item.uuid">{{item.display}}</option>
       </select>
@@ -105,7 +106,7 @@
     <div class="form-group">
       <label for="start-date">Select Date</label>
       <div class="input-group">
-        <input class="form-control" style="float:none" placeholder="Select a date" ngx-mydatepicker name="mydate"
+        <input class="form-control" style="float:none" placeholder="Select a date" ngx-mydatepicker name="visitDate"
           [(ngModel)]="groupVisitDate" #dp="ngx-mydatepicker" required />
 
         <span class="input-group-btn">
@@ -115,10 +116,11 @@
         </span>
       </div>
     </div>
+    </form>
 
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="modalRef.hide()"> Close </button>
-    <button type="button" class="btn btn-primary" (click)="saveGroupVisit()"> Start Group Meeting </button>
+    <button type="button" class="btn btn-primary" (click)="saveGroupVisit()" [disabled]="!startVisitForm.valid"> Start Group Meeting </button>
+    <button type="button" class="btn btn-danger" (click)="modalRef.hide()"> Close </button>
   </div>
 </ng-template>

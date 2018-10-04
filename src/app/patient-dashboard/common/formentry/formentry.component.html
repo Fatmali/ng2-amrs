@@ -98,6 +98,7 @@
         <button *ngIf="programEncounter" (click)="navigateTo('enrollmentManager')" type="button" pButton icon="fa-file" label="Back to Enrollment Manager"></button>
         <button *ngIf="!(transferCareForm || programEncounter)" (click)="navigateTo('patientDashboard')" type="button" pButton icon="fa-user" label="Patient Dashboard"></button>
         <button *ngIf="!(transferCareForm || programEncounter)" (click)="navigateTo('patientSearch')" type="button" pButton icon="fa-search" label="Patient Search"></button>
+        <button *ngIf="isGroupVisit" (click)="navigateTo('groupManager')" type="button" pButton icon="fa-users" label="Group Manager"></button>
       </div>
     </footer>
 
@@ -123,9 +124,13 @@
     </h5>
   </p-dialog>
 
-  <p-dialog header="Process Referrals" [(visible)]="showProcessReferralsDialog" modal="true">
-    You have referred the patient to differentiated care program.
-    1. Do you want to enroll patient to the program? <input type="checkbox">
-    2. Do you want to enroll the patient to a community group <input type="checkbox">
+  <p-dialog [closable]="true" header="Process Referrals" [(visible)]="showProcessReferralsDialog" [modal]="true">
+    <h4><i class="fa fa-question-circle"></i> You have referred the patient to differentiated care program.</h4>
+      <h4>Do you want to enroll the patient to the program? <mat-checkbox> </mat-checkbox></h4>
+      <h4>Do you want to enroll the patient to a community group? <mat-checkbox> </mat-checkbox>  </h4>
+    <p-footer>
+      <button type="button" class="btn btn-primary" style="margin-right: 7px;">Proceed</button>
+      <button type="button" class="btn btn-default" (click)="hideProcessReferralsDialog()">Cancel</button>
+    </p-footer>
   </p-dialog>
 </div>

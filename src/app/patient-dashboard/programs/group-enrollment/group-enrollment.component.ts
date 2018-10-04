@@ -7,6 +7,8 @@ import * as _ from 'lodash';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 import { GroupEnrollmentModalComponent } from './group-enrollment-modal/group-enrollment-modal.component';
 import {SuccessModalComponent} from '../../../group-manager/modals/success-modal.component';
+import { Router } from '@angular/router';
+import { UserDefaultPropertiesService } from '../../../user-default-properties';
 
 @Component({
     selector: 'group-enrollment-component',
@@ -33,7 +35,9 @@ export class GroupEnrollmentComponent implements OnInit, OnDestroy {
   constructor(private patientService: PatientService,
     private groupResouceService: CommunityGroupService,
     private groupMemberService: CommunityGroupMemberService,
-    private modalService: BsModalService) {}
+    private modalService: BsModalService,
+    private propertiesDefaultService: UserDefaultPropertiesService,
+    private router: Router) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -212,6 +216,11 @@ export class GroupEnrollmentComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  navigateToGroup(groupUuid: string) {
+    const locationUuid = this.propertiesDefaultService.getCurrentUserDefaultLocationObject()['uuid'];
+    this.router.navigate(['/clinic-dashboard/' + locationUuid + '/general/group-manager/group/' + groupUuid]);
   }
 
 }
