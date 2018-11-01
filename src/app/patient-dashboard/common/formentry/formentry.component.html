@@ -88,8 +88,8 @@
       <strong>Differentiated Care Referral</strong>
       <hr style="margin-top:1px; margin-bottom:1px;" />
       <diff-care-referral-status [status]="diffCareReferralStatus"></diff-care-referral-status>
-      <div *ngIf="enrollToGroup">
-        You have chosen to also enroll the patient to a group, you will be redirected to the group enrollment page in 10 seconds.
+      <div class="alert alert-info" *ngIf="enrollToGroup" style="margin-top: 21px;">
+        <i class="fa fa-users"></i> You have chosen to also enroll the patient to a group, you will be redirected to the group enrollment page.
       </div>
     </div>
     <div *ngIf="referralStatus">
@@ -109,13 +109,28 @@
 
   <p-dialog [closable]="true" header="Process Referrals" [(visible)]="showProcessReferralsDialog" [modal]="true">
       <h4><i class="fa fa-question-circle"></i> You have referred the patient to differentiated care program.</h4>
-        <h4>Do you want to enroll the patient to the program? 
-          <mat-checkbox class="pull-right" color="primary" [(ngModel)]="enrollToDC" [disableRipple]="true"></mat-checkbox>
-        </h4>
-        <h4>Do you want to enroll the patient to a community group? 
-          <mat-checkbox class="pull-right" color="primary" [(ngModel)]="enrollToGroup" [disableRipple]="true"></mat-checkbox>
-        </h4>
+        <ul class="list-group">
+          <li class="list-group-item">
+        <h4>Do you want to enroll the patient to the program?</h4>
+          <div class="row">
+          <button class="pull-right btn btn-xs" [ngClass]="{'btn-primary': !enrollToDC, 'btn-default': enrollToDC}" style="margin-left: 11px; margin-right: 7px;" 
+          (click)="toggleEnrollToDC()"> <i class="fa fa-close"></i> No </button>
+          <button class="pull-right btn btn-xs" [ngClass]="{'btn-primary': enrollToDC, 'btn-default': !enrollToDC}" style="margin-left: 5px;" 
+          (click)="toggleEnrollToDC()"> <i class="fa fa-check"></i> Yes</button>
+          </div>
+          </li>
+        <li class="list-group-item">
+        <h4>Do you want to enroll the patient to a community group?</h4>
+        <div class="row"> 
+          <button class="pull-right btn btn-xs" style="margin-left: 11px; margin-right: 7px;"  [ngClass]="{'btn-primary': !enrollToGroup, 'btn-default': enrollToGroup}" (click)="toggleEnrollToGroup()" [disabled]="!enrollToDC">
+                <i class="fa fa-close"></i> No</button>
+          <button class="pull-right btn btn-xs" style="margin-left: 5px;"  [ngClass]="{'btn-primary': enrollToGroup, 'btn-default': !enrollToGroup}" (click)="toggleEnrollToGroup()"  [disabled]="!enrollToDC">
+              <i class="fa fa-check"></i> Yes</button>
+        </div>
+        </li>
+      </ul>
       <p-footer>
+        <button type="button" class="btn btn-danger pull-left" style="margin-left: 7px" (click)="cancelReferralToDC()">Cancel</button>
         <button type="button" class="btn btn-primary" style="margin-right: 7px;" (click)="handleReferralToDC()">Proceed</button>
       </p-footer>
     </p-dialog>

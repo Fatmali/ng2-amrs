@@ -1,8 +1,8 @@
 
-import {take} from 'rxjs/operators';
+import {take, map} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin ,  Observable, Subject, Subscription ,  BehaviorSubject, of } from 'rxjs';
+import { forkJoin ,  Observable, Subject, Subscription ,  BehaviorSubject, of, interval } from 'rxjs';
 import { flatMap, first } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'lodash';
@@ -47,6 +47,7 @@ import { PersonResourceService } from '../../../openmrs-api/person-resource.serv
 })
 export class FormentryComponent implements OnInit, OnDestroy {
 
+  public counter: number;
   public busyIndicator: any = {
     busy: true,
     message: 'Please wait...' // default message
@@ -934,7 +935,7 @@ export class FormentryComponent implements OnInit, OnDestroy {
   public handleReferralToDC() {
     this.showProcessReferralsDialog = false;
     if (this.enrollToDC) {
-      this.isBusyIndicator(true, 'Enrolling Patient to Differentiated care program ....');
+      this.isBusyIndicator(true, 'Enrolling Patient to Differentiated care program...');
             this.referralsHandler.handleFormReferals(this.patient,
               this.form).pipe(
               take(1)).subscribe(
@@ -942,6 +943,7 @@ export class FormentryComponent implements OnInit, OnDestroy {
                   this.isBusyIndicator(false, '');
                   this.showSuccessDialog = true;
                   this.diffCareReferralStatus = results.differentiatedCare;
+                  interval(10000).pipe( map((x) => this.counter = x));
                   setTimeout(() => {
                     if (this.enrollToGroup) {
                     this.navigateTo('groupEnrollment');
@@ -955,16 +957,25 @@ export class FormentryComponent implements OnInit, OnDestroy {
                   this.diffCareReferralStatus = error.differentiatedCare;
                 }
               );
-    } else if (this.enrollToGroup) {
-        this.showSuccessDialog = true;
-        setTimeout(() => {
-          if (this.enrollToGroup) {
-          this.navigateTo('groupEnrollment');
-          }
-        }, 10000);
     } else {
       this.showSuccessDialog = true;
     }
+  }
+
+  public toggleEnrollToDC() {
+    this.enrollToDC = !this.enrollToDC;
+    if(!this.enrollToDC) {
+      this.enrollToGroup = false;
+    }
+  }
+
+  public toggleEnrollToGroup() {
+    this.enrollToGroup = !this.enrollToGroup;
+  }
+
+  public cancelReferralToDC() {
+    this.showProcessReferralsDialog = false;
+    this.showSuccessDialog = true;
   }
 
   private resetLastTab() {

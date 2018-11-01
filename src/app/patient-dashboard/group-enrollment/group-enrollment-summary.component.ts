@@ -6,7 +6,7 @@ import { Subscription, of } from 'rxjs';
 import * as _ from 'lodash';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 import {SuccessModalComponent} from '../../group-manager/modals/success-modal.component';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UserDefaultPropertiesService } from '../../user-default-properties';
 
 @Component({
@@ -28,8 +28,10 @@ export class GroupEnrollmentSummaryComponent implements OnInit, OnDestroy {
   groupToUnenroll: any;
   groupToEnroll: any;
   modalState: any;
+  reloadCount = 0;
 
-  @ViewChild('transferGroupModal') transferGroupModal: BsModalRef;
+  @ViewChild('transferGroupModal') public transferGroupModal: BsModalRef;
+  @ViewChild('enrollModal') public enrollModal: BsModalRef;
   enrolledPrograms = [];
 
   constructor(private patientService: PatientService,
@@ -37,7 +39,8 @@ export class GroupEnrollmentSummaryComponent implements OnInit, OnDestroy {
     private groupMemberService: CommunityGroupMemberService,
     private modalService: BsModalService,
     private propertiesDefaultService: UserDefaultPropertiesService,
-    private router: Router) {}
+    private router: Router,
+    private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -102,6 +105,12 @@ export class GroupEnrollmentSummaryComponent implements OnInit, OnDestroy {
             this.getGroupsPrograms();
             this.getCurrentGroupEnrollments();
             this.loading = false;
+            this.route.queryParams.subscribe((queryParams) => {
+              if (queryParams['referral'] && this.reloadCount === 0) {
+                this.showEnrollModal(this.enrollModal);
+              }
+            });
+            this.reloadCount++;
           }
         },
         (error) => console.log(error));
