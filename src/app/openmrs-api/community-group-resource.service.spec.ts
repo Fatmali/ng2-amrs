@@ -239,9 +239,9 @@ describe('CommunityGroupService', () => {
       'cohort D'
     ];
     communityGroupService.getGroupsByLocationUuid(loc_uuid).subscribe();
-    const req = httpMock.expectOne(communityGroupService.getOpenMrsBaseUrl() + '/cohort' + '?location=' + loc_uuid + '&v=full');
+    const req = httpMock.expectOne(communityGroupService.getOpenMrsBaseUrl() + '/cohort' + '?location=' + loc_uuid + '&v=default');
     expect(req.request.method).toBe('GET');
-    expect(req.request.urlWithParams).toContain('&v=full');
+    expect(req.request.urlWithParams).toContain('&v=default');
     req.flush(groups);
   });
 

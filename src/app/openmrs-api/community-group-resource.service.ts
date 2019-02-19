@@ -192,7 +192,7 @@ export class CommunityGroupService {
    public getGroupsByLocationUuid(locationUuid: string) {
     const params = new HttpParams()
     .set('location', `${locationUuid}`)
-    .set('v', this.v);
+    .set('v', 'default');
     const url = this.getOpenMrsBaseUrl() + '/cohort';
     return this.http.get<any>(url, {params}).pipe(map((response) => response.results));
    }

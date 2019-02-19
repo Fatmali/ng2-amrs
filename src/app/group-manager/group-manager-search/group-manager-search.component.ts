@@ -86,10 +86,11 @@ export class GroupManagerSearchComponent implements OnInit, OnDestroy {
                              this.fetchingGroups = false;
                              this.previousLocationUuid = locationUuid;
                              this.rowData = this.groupsInCurrentFacility;
-                             console.log(this.rowData, 'rowData');
+                             this.hideGroupsInCurrentFacility = false;
             });
             this.subscription.add(sub);
         } else {
+           this.hideGroupsInCurrentFacility = false;
            this.rowData = this.groupsInCurrentFacility;
         }
     }
